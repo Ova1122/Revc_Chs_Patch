@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="render">
+      <UniqueIdentifier>{b533fd31-dc85-4a63-8ac5-95b9051bb461}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="render\inc">
+      <UniqueIdentifier>{c8109d3e-a188-44a4-befc-4be06dfbd9b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="render\src">
+      <UniqueIdentifier>{22af6107-5ea9-4439-99de-411361748f7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core">
+      <UniqueIdentifier>{0a7f304b-f64d-4749-9779-e6d004e1cd34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\inc">
+      <UniqueIdentifier>{99f0396c-9528-4d21-9eab-a5463188a331}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rw">
+      <UniqueIdentifier>{896fc4b8-13b1-4607-af17-352c4440c83e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rw\inc">
+      <UniqueIdentifier>{fb0af988-cce8-4e1f-9734-3c911d9cdc0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="math">
+      <UniqueIdentifier>{c149f112-1653-4abe-bdb0-cb5df9879df7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="math\inc">
+      <UniqueIdentifier>{e7e0010d-b220-492c-b0e4-8617fece5e36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="math\src">
+      <UniqueIdentifier>{7480066c-d4e5-45a8-b4a3-2ed82407249b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\Font.h">
+      <Filter>render\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\Sprite2d.h">
+      <Filter>render\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="core\common.h">
+      <Filter>core\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="rw\TxdStore.h">
+      <Filter>rw\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Rect.h">
+      <Filter>math\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Vector.h">
+      <Filter>math\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Vector2D.h">
+      <Filter>math\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="MemUtils.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FileMgr.h">
+      <Filter>core\inc</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\Font.cpp">
+      <Filter>render\src</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\Sprite2d.cpp">
+      <Filter>render\src</Filter>
+    </ClCompile>
+    <ClCompile Include="math\Rect.cpp">
+      <Filter>math\src</Filter>
+    </ClCompile>
+    <ClCompile Include="MemUtils.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="rw\TxdStore.cpp">
+      <Filter>rw\inc</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
