@@ -14,7 +14,7 @@ public:
 #define RET(rettype) (*(rettype(__thiscall*)
 //要调用的函数地址
 //#define FUN_ADDRESS(Address) )((DWORD)ClassAddress))
-//x86专用 调用类函数 参数1必须是类地址,后面的参数按顺序输入  THIS_CALL(rettype,funaddress,val1type,val2type,...)(class_address,val1,val2,...);
+//x86专用 调用类函数 参数1必须是类地址,后面的参数按顺序输入  THIS_CALL(rettype,funaddress,val1type,val2type,...)(class_address,val1,val2,...); 
 #define THIS_CALL(return_type,fun_address,...)  RET(return_type)(DWORD,##__VA_ARGS__))(fun_address))
 
     // 改进后的宏定义

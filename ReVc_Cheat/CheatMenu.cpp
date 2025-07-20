@@ -155,7 +155,7 @@ VehModel gtaVC_VehModels[] =
   { MI_HOTRINB,    "热环赛车B" },
   { MI_BLOODRA,    "血环赛车A" },
   { MI_BLOODRB,    "血环赛车B" },
-  { MI_VICECHEE,   "罪恶都市猎豹" }
+  { MI_VICECHEE,   "猎豹" }
 };
 
 const char* gtaVC_VehicleModels[(sizeof(gtaVC_VehModels) / sizeof(gtaVC_VehModels[0]))][2];
@@ -482,14 +482,8 @@ void CheatMenu::Show()
 					//bool bulletProof = mycar->bBulletProof;
 					if (ImGui::Checkbox(carLocked? u8"门锁:已锁定":u8"门锁:已解锁", &carLocked))
 					{
-						if (carLocked)
-						{
-							CheatList::AddCheat(CHEAT_TYPE::VehicleProof, true, &cpf);
-						}
-						else
-						{
-							CheatList::AddCheat(CHEAT_TYPE::VehicleProof, true, &cpf);
-						}
+						
+						CheatList::AddCheat(CHEAT_TYPE::VehicleProof, true, &cpf);
 					}
 					ImGui::Separator();
 					
