@@ -4,16 +4,6 @@
 #include <common.h>
 #include <vector>
 
-//typedef void* RwTexDictionary;
-//typedef void* RwStream;
-
-
-
-class CCTxdStore
-{
-	//static CPool<TxdDef,TxdDef> *ms_pTxdPool;
-	//static RwTexDictionary *ms_pStoredTxd;
-public:
 	// 首先定义条件部分
 #ifdef _DEBUG
 #define DEBUG_BREAK __debugbreak()
@@ -21,6 +11,28 @@ public:
 #define DEBUG_BREAK MessageBox(NULL, L"该版本无法兼容", L"错误", MB_OK)
 #endif
 
+static void CHECK_Vec(std::vector <ULONGLONG> v)
+{
+	if (v.size() == 0)
+	{
+		DEBUG_BREAK;
+		printf_s("警告 ::该版本无法兼容\n");
+		exit(0);
+	}
+	if (v.size() > 1) {
+
+		printf_s("警告 ::该版本可能存在兼容性问题 Address:>%d\n", (int)(v).size());
+	}
+}
+#define CHECK_ERROR(v) CHECK_Vec(v)
+
+class CCTxdStore
+{
+	//static CPool<TxdDef,TxdDef> *ms_pTxdPool;
+	//static RwTexDictionary *ms_pStoredTxd;
+public:
+
+	/*
 // 然后定义主宏
 #define CHECK_ERROR(v) \
     do { \
@@ -32,7 +44,7 @@ public:
         if ((v).size() > 1) { \
             printf_s("警告 ::该版本可能存在兼容性问题 Address:>%d\n", (int)(v).size()); \
         } \
-    } while(0)
+    } while(0)*/
 	/*
 	static void CHECK_ERROR(std::vector <DWORD> &v)
 	{
@@ -56,7 +68,7 @@ public:
 			printf_s("警告 ::该版本可能存在兼容性问题 Address:>%d\n", v.size());
 		}
 	}*/
-	static void InitPatch(int exe);
+	static void InitPatch(int exe, const char* ExeName);
 	//static void Initialise(void);
 	//static void Shutdown(void);
 	//static void GameShutdown(void);

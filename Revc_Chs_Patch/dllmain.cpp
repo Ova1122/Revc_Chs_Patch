@@ -152,9 +152,9 @@ F_CFileMgr_OpenFile* CCFileMgr::dOpenFile = NULL;
 F_CFileMgr_CloseFile* CCFileMgr::dCloseFile = NULL;
 
 DWORD *VCMenuManager_Class = 0;
-void HookLangUageSelect(DWORD exe)
+void HookLangUageSelect(DWORD exe, const char* ExeName)
 {
-    const char* ExeName = "reVC.exe";
+    //const char* ExeName = "reVC.exe";
 
     //菜单选择hook
     std::vector <ULONGLONG> vResultContainer;
@@ -292,22 +292,24 @@ void CCFont::Add_Memu_Chs()
 }
 void Init()
 {
+    const char* ExeName = "reVC.exe";
+
     //Sleep(200);
-    EXE = (DWORD)GetModuleHandleA("reVC.exe");
+    EXE = (DWORD)GetModuleHandleA(ExeName);
     printf_s("开始处理:CTxdStore\n");
-    CCTxdStore::InitPatch(EXE);
+    CCTxdStore::InitPatch(EXE, ExeName);
 
     printf_s("开始处理:CSprite2d\n");
-    CCSprite2d::InitPatch(EXE);
+    CCSprite2d::InitPatch(EXE, ExeName);
 
     printf_s("开始开始处理:CFont\n");
    // CCFont::InitValue(EXE);
-    CCFont::InitPatch(EXE);
+    CCFont::InitPatch(EXE, ExeName);
 
     printf_s("初始化Hook:CFont\n");
     CCFont::InitHook(EXE);
     printf_s("初始化Hook:CMenu\n");
-    HookLangUageSelect(EXE);
+    HookLangUageSelect(EXE, ExeName);
    
 
     printf_s("执行完毕...\n");

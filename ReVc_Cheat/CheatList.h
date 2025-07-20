@@ -378,7 +378,7 @@ class CheatList
 public:
 
 
-	static void InitPatch();
+	static void InitPatch(const char* ExeName);
 	static void UpDate();
 	static void AddCheat(CHEAT_TYPE type, bool isloop, void* data = nullptr);
 	static void RemoveCheat(CHEAT_TYPE type);

@@ -226,7 +226,7 @@ struct CheatEvent
     CHEAT_TYPE type;
 	void* data = nullptr;
 };
-std::vector <CheatEvent> EventList;
+//std::vector <CheatEvent> EventList;
 std::map <CHEAT_TYPE,CheatEvent> Eventmap;
 
 float* jumpAddr = 0;
@@ -234,9 +234,13 @@ float* jumpAddr = 0;
 int AmmoTotalAddr = 0;//总弹药
 int AmmoInClipAddr = 0;//弹夹
 
-void CheatList::InitPatch()
+void CheatList::InitPatch(const char* ExeName)
 {
-	const char* ExeName = "reVC.exe";
+	if (!ExeName)
+	{
+		return;
+	}
+	//const char* ExeName = "reVC.exe";
    // DWORD exe = (DWORD)GetModuleHandleA("reVC.exe");
     std::vector <ULONGLONG> vResultContainer;
     //获取CPlayerPed
@@ -511,6 +515,7 @@ void PushVehicle(int model)
 				//FindPlayerPed()->SetPosition(spawnPos);
 				vehicle->m_nDoorLock = CARLOCK_UNLOCKED;
 				//vehicle->bEngineOn = 1;
+				//设置刷出的车为重型车辆
 				vehicle->bIsHeavy = true;
 
 				//vehicle->m_vehType = vt;

@@ -39,9 +39,9 @@ const char AddRef_code[] = "558BEC FF ?? ?? E8 ?? ?? ?? ?? 83 C4 04 FF ?? ?? 5D 
 
 //ºÚªØ¿‡√˚
 using MU = MemUnits;
-void CCTxdStore::InitPatch(int exe)
+void CCTxdStore::InitPatch(int exe, const char* ExeName)
 {
-	const char* ExeName = "reVC.exe";
+	//const char* ExeName = "reVC.exe";
 
 	std::vector <ULONGLONG> vResultContainer1;
 

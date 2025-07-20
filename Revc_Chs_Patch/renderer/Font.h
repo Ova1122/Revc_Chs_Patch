@@ -163,7 +163,7 @@ public:
 	//static int32* RsGlobal_width;
 	//static int32* RsGlobal_height;
 
-	static void InitPatch(DWORD exe);
+	static void InitPatch(DWORD exe, const char* ExeName);
 	//初始化hook变量
 	static void InitValue(DWORD exe);
 	//初始化hook函数

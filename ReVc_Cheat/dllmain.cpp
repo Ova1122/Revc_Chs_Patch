@@ -306,13 +306,17 @@ void Render()
     
 }
 
-void initPacth()
+void initPacth(const char* ExeName)
 {
     //简化类名
     using MU = MemUnits;
-    const char* ExeName = "reVC.exe";
+    if (!ExeName)
+    {
+        return;
+    }
+  
 
-    DWORD exe = (DWORD)GetModuleHandleA("reVC.exe");
+    DWORD exe = (DWORD)GetModuleHandleA(ExeName);
     std::vector <ULONGLONG> vResultContainer;
     //获取hwnd
     vResultContainer =  MU::ScanMemory(startD3D_Code, ExeName);
@@ -417,9 +421,10 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     case DLL_PROCESS_ATTACH:
     {
         printf_s("初始化修改器\n");
+        const char* ExeName = "reVC.exe";
 
-        initPacth();
-		CheatList::InitPatch();
+        initPacth(ExeName);
+		CheatList::InitPatch(ExeName);
         CheatMenu::InitMenu();
         printf_s("初始化完毕\n");
     }

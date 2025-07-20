@@ -58,9 +58,9 @@ const char charSetRenderState_code[] = "8B 01 85 C0 74 ?? 50 E8 ?? ?? ?? ?? 83 C
 using MU = MemUnits;
 
 
-void CCSprite2d::InitPatch(DWORD exe)
+void CCSprite2d::InitPatch(DWORD exe, const char* ExeName)
 {
-	const char* ExeName = "reVC.exe";
+	//const char* ExeName = "reVC.exe";
 	//RW
 	std::vector <ULONGLONG> vResultContainer1;
 	vResultContainer1 = MU::ScanMemory(RwRenderStateSet_code,ExeName);

@@ -32,7 +32,7 @@ public:
 	static int32 RwRwRenderStateSet(RwRenderState state, void* value);
 	static int32 RwRwRenderStateGet(RwRenderState state, void* value);
 	//typedef  void(F_DRAW_RECT)(const CRect& r, const CRGBA& col);
-	static void InitPatch(DWORD exe);
+	static void InitPatch(DWORD exe, const char* ExeName);
 	static void DrawRect(const CRect& r, const CRGBA& col);
 	static void Draw(const CRect& rect, const CRGBA& col);
 
