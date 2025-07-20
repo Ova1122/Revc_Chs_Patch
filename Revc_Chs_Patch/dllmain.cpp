@@ -177,8 +177,8 @@ void HookLangUageSelect(DWORD exe, const char* ExeName)
     ReloadObrTxtGxt = (bool*)(ReloadObrTxtGxt_addr);
 
     VCMenuManager_Class = (DWORD*)vResultContainer[0] + 0xA;
-    dInitialiseChangedLanguageSettings = (F_InitialiseChangedLanguageSettings*)MemUnits::Call_addr_To_Addr(vResultContainer[0] + 0x1F);
-    dSaveSettings = (F_InitialiseChangedLanguageSettings*)MemUnits::Call_addr_To_Addr(vResultContainer[0] + 0x2A);
+    dInitialiseChangedLanguageSettings = (F_InitialiseChangedLanguageSettings*)MU::Call_addr_To_Addr(vResultContainer[0] + 0x1F);
+    dSaveSettings = (F_InitialiseChangedLanguageSettings*)MU::Call_addr_To_Addr(vResultContainer[0] + 0x2A);
 
 
    // printf_s("开始Patch:Lang_Call_Back\n");
@@ -210,8 +210,8 @@ void HookLangUageSelect(DWORD exe, const char* ExeName)
      //DWORD CFileMgr_OpenFile_next_addr1 = (hook_OpenFile_offset + 0xF8);
      //DWORD CFileMgr_OpenFile_addr = CFileMgr_OpenFile_next_addr1 + CFileMgr_OpenFile_addr1;
      
-     CCFileMgr::dOpenFile = (F_CFileMgr_OpenFile*)MemUnits::Call_addr_To_Addr(hook_OpenFile_offset + 0xF3);
-     CCFileMgr::dCloseFile = (F_CFileMgr_CloseFile*)MemUnits::Call_addr_To_Addr(hook_OpenFile_offset + 0x224);
+     CCFileMgr::dOpenFile = (F_CFileMgr_OpenFile*)MU::Call_addr_To_Addr(hook_OpenFile_offset + 0xF3);
+     CCFileMgr::dCloseFile = (F_CFileMgr_CloseFile*)MU::Call_addr_To_Addr(hook_OpenFile_offset + 0x224);
      //dCFileMgr_OpenFile = (F_CFileMgr_OpenFile*)(CFileMgr_OpenFile_addr);
     MU::WriteCall(hook_OpenFile_addr, (DWORD)CText_Load_CallBack,MU::CODE_CALL);
 
@@ -263,25 +263,8 @@ void LangchaSelect(int8 action)
         FrontEndMenuManager.SaveSettings();
     }*/
 }
-void Langcha1Select(int8 action)
-{
-    if (action == FEOPTION_ACTION_SELECT)
-    {
-        // printf_s("被点击:%d\n", action);
-        *m_PrefsLanguage = LANGUAGE_CHINESE_A;
-        *ReloadObrTxtGxt = true;
-        //下面两个不能直接调用 类函数
-       // dInitialiseChangedLanguageSettings();
-        //dSaveSettings();
-        //调用类函数
-        THIS_CALL(void, dInitialiseChangedLanguageSettings)((DWORD)&VCMenuManager_Class);
-        THIS_CALL(void, dSaveSettings)((DWORD)&VCMenuManager_Class);
-        //RET(void)(DWORD)FUN_ADDRESS(dInitialiseChangedLanguageSettings)((DWORD)&VCMenuManager_Class);
-       // RET(void)(DWORD)FUN_ADDRESS(dSaveSettings)((DWORD)&VCMenuManager_Class);
-    }
 
- 
-}
+
 //在语言选项添加中文
 void CCFont::Add_Memu_Chs()
 {
@@ -345,9 +328,11 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 
 
                 Init();
+                //加载修改器dll
                 HINSTANCE hDll = LoadLibrary(L"revc_cheat.dll");
                 if (hDll == NULL)
                 {
+                    printf_s("revc_cheat.dll加载失败\n");
                     // 处理错误
                 }
             }

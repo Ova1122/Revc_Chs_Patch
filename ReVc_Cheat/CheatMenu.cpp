@@ -55,7 +55,7 @@ VehModel gtaVC_VehModels[] =
   { MI_LINERUN,    "货运卡车" },
   { MI_PEREN,      "佩伦商队" },
   { MI_SENTINEL,   "哨兵轿车" },
-  { MI_RIO,        "里约轿车" },
+  { MI_RIO,        "里约帆船" },
   { MI_FIRETRUCK,  "消防车" },
   { MI_TRASH,      "垃圾车" },
   { MI_STRETCH,    "加长礼车" },

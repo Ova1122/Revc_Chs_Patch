@@ -14,7 +14,7 @@ public:
 #define RET(rettype) (*(rettype(__thiscall*)
 //要调用的函数地址
 //#define FUN_ADDRESS(Address) )((DWORD)ClassAddress))
-//调用类函数 参数1必须是类地址,后面的参数按顺序输入
+//x86专用 调用类函数 参数1必须是类地址,后面的参数按顺序输入  THIS_CALL(rettype,funaddress,val1type,val2type,...)(class_address,val1,val2,...);
 #define THIS_CALL(return_type,fun_address,...)  RET(return_type)(DWORD,##__VA_ARGS__))(fun_address))
 
     // 改进后的宏定义
@@ -34,14 +34,14 @@ public:
         CODE_JMP
     };
 
-    //组装call文本
+    //组装call文本 
     static std::string MakeCallStr(DWORD adderss)
     {
         //DWORD rel32 = func - (address + 5);
         std::ostringstream ss;
         ss << std::hex << adderss;
         std::string re = "E8";
-        re.append(ss.str());
+        re.append( ss.str());
         return re;
     }
     static const byte ret = 0xC3;
@@ -71,7 +71,8 @@ public:
     {
         DWORD old;
         //设置为可写
-        VirtualProtect((LPVOID)address, 5, PAGE_EXECUTE_READWRITE, &old);
+        //VirtualProtect((LPVOID)address, 5, PAGE_EXECUTE_READWRITE, &old);
+        SetMemWriteEnable(address, 5);
         DWORD rel32 = func - (address + 5);
         if (c == HCODE::CODE_CALL)
             MemWrite<byte>(address, call);
@@ -79,7 +80,8 @@ public:
 
         MemWrite<DWORD>(address + 1, rel32);
         //恢复
-        VirtualProtect((LPVOID)address, 5, old, &old);
+        SetMemWriteDisable(address, 5);
+       // VirtualProtect((LPVOID)address, 5, old, &old);
     }
 
 
