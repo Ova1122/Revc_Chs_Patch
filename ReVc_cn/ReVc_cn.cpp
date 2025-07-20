@@ -53,6 +53,7 @@ bool injectDll(char sDllPath[], TCHAR run_path[])
 }
 
 #include <Shlwapi.h>
+#include <string>
 #pragma comment(lib, "Shlwapi.lib")
 bool MakeResourcePath()
 {
@@ -84,6 +85,40 @@ bool MakeResourcePath()
         MessageBoxW(nullptr, L"找不到资源文件: <Chinese.dat>，请确认汉化文件是否在对应文件夹！", L"警告", MB_ICONWARNING);
         return false;
     }
+    /*
+    const char* section = "Display";  // 节名称（通常是方括号内的名称）
+    const char* key = "Windowed";     // 要修改的键名
+    // 尝试修改INI键值
+    if (WritePrivateProfileStringA(section, key, "1", "reVC.ini")) {
+        std::cout << "成功修改: " << key << "=1" << std::endl;
+    }
+    else {
+        DWORD error = GetLastError();
+        std::cerr << "修改失败! 错误代码: " << error << std::endl;
+        std::cerr << "可能原因: " << std::endl;
+        std::cerr << "1. 文件不存在或路径错误" << std::endl;
+        std::cerr << "2. 权限不足" << std::endl;
+        std::cerr << "3. 指定的节或键不存在" << std::endl;
+    }*/
+
+    if (WritePrivateProfileStringW(L"General", L"Language", L"8", L"temm/../reVC.ini")) {
+
+		//std::cout << "成功修改默认语言为简体中文" << std::endl;
+		//MessageBoxA(nullptr, "修改默认语言为简体中文成功","提示", MB_ICONINFORMATION);
+	}
+    else {
+        DWORD error = GetLastError();
+        std::string errorMessage = "修改默认语言失败，请检查reVC.ini文件是否存在或权限是否足够! 错误代码: " + std::to_string(error);
+        MessageBoxA(nullptr, errorMessage.c_str(), "错误", MB_ICONERROR);
+       
+      
+         /*std::cerr << "修改失败! 错误代码: " << error << std::endl;
+        std::cerr << "可能原因: " << std::endl;
+        std::cerr << "1. 文件不存在或路径错误" << std::endl;
+        std::cerr << "2. 权限不足" << std::endl;
+        std::cerr << "3. 指定的节或键不存在" << std::endl;*/
+    }
+
 
     return true;
 }
