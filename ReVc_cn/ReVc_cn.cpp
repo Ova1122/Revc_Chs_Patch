@@ -19,6 +19,7 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // 主窗口类名
 //#pragma comment(lib,"imagehlp.lib")  
 
 //软件启动前注入Dll
+/*
 //param1:sDllPath:dll路径，run_path:执行文件路径
 bool injectDll(char sDllPath[], TCHAR run_path[])
 {
@@ -49,6 +50,114 @@ bool injectDll(char sDllPath[], TCHAR run_path[])
     CloseHandle(hNewThread);
     CloseHandle(curProcessHandle);
     ResumeThread(pi.hThread);//继续
+    return true;
+}*/
+
+// 使用APC注入Dll
+// param1: sDllPath - DLL路径, run_path - 目标进程路径
+bool injectDll(char sDllPath[], TCHAR run_path[])
+{
+    // 启动目标进程（挂起状态）
+    STARTUPINFO si = { 0 };
+    si.cb = sizeof(si);
+    si.dwFlags = STARTF_USESHOWWINDOW;
+    si.wShowWindow = SW_SHOW;
+
+    PROCESS_INFORMATION pi;
+    BOOL bRet = ::CreateProcess(
+        NULL,
+        run_path,
+        NULL,
+        NULL,
+        FALSE,
+        CREATE_SUSPENDED,  // 关键：创建挂起进程
+        NULL,
+        NULL,
+        &si,
+        &pi
+    );
+
+    if (!bRet) {
+        return false; // 进程创建失败
+    }
+
+    HANDLE hProcess = pi.hProcess;
+    HANDLE hThread = pi.hThread;
+
+    // 在目标进程分配内存空间
+    SIZE_T pathLen = strlen(sDllPath) + 1;
+    LPVOID pRemoteMem = VirtualAllocEx(
+        hProcess,
+        NULL,
+        pathLen,
+        MEM_COMMIT | MEM_RESERVE,
+        PAGE_READWRITE
+    );
+
+    if (!pRemoteMem) {
+        TerminateProcess(hProcess, 0); // 清理
+        CloseHandle(hThread);
+        CloseHandle(hProcess);
+        return false;
+    }
+
+    // 写入DLL路径到目标进程
+    SIZE_T bytesWritten;
+    BOOL writeRet = WriteProcessMemory(
+        hProcess,
+        pRemoteMem,
+        sDllPath,
+        pathLen,
+        &bytesWritten
+    );
+
+    if (!writeRet || bytesWritten != pathLen) {
+        VirtualFreeEx(hProcess, pRemoteMem, 0, MEM_RELEASE);
+        TerminateProcess(hProcess, 0);
+        CloseHandle(hThread);
+        CloseHandle(hProcess);
+        return false;
+    }
+
+    // 获取LoadLibraryA地址
+    FARPROC pfnLoadLib = GetProcAddress(
+        GetModuleHandleA("kernel32.dll"),
+        "LoadLibraryA"
+    );
+
+    if (!pfnLoadLib) {
+        VirtualFreeEx(hProcess, pRemoteMem, 0, MEM_RELEASE);
+        TerminateProcess(hProcess, 0);
+        CloseHandle(hThread);
+        CloseHandle(hProcess);
+        return false;
+    }
+
+    // 向目标线程的APC队列添加任务
+    DWORD apcRet = QueueUserAPC(
+        (PAPCFUNC)pfnLoadLib, // 指向LoadLibraryA
+        hThread,              // 目标线程句柄
+        (ULONG_PTR)pRemoteMem // DLL路径地址作为参数
+    );
+
+    if (!apcRet) {
+        VirtualFreeEx(hProcess, pRemoteMem, 0, MEM_RELEASE);
+        TerminateProcess(hProcess, 0);
+        CloseHandle(hThread);
+        CloseHandle(hProcess);
+        return false;
+    }
+
+    // 恢复线程执行（此时将处理APC队列）
+    ResumeThread(hThread);
+
+    // 注意：内存pRemoteMem在DLL加载后由目标进程管理
+    // 这里不主动释放，避免在DLL加载前被释放
+
+    // 关闭句柄
+    CloseHandle(hThread);
+    CloseHandle(hProcess);
+
     return true;
 }
 
