@@ -328,11 +328,18 @@ void CheatMenu::InitMenu()
 }
 void CheatMenu::Show()
 {
+	CPlayerPed* player = (CPlayerPed*)CheatList::GetDataAddress(GET_VALUE::PlayerInfo);
+	if (!player)
+	{
+		return;
+	}
+
+
 	ImGui::Begin(u8"CheatMenu(°´F5Æô¶¯/¹Ø±Õ)",0,ImGuiWindowFlags_NoCollapse| ImGuiWindowFlags_NoScrollbar);
 	//ImGui::Text("Test");
 
-	CPlayerPed* player = (CPlayerPed*)CheatList::GetDataAddress(GET_VALUE::PlayerInfo);
-
+	
+	
 	
 	
 	

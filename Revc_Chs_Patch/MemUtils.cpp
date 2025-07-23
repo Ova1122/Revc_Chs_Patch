@@ -2,13 +2,14 @@
 
 #include "pch.h"
 #include <iostream>
-#include <ppl.h>  // 并行模式库
-#include <emmintrin.h> // 添加此头文件以解决未定义标识符 "__m128i" 和 "_mm_loadu_si128" 的问题
+
 #include <mutex>
 #include <bitset>
 #include <array> // Ensure this header is included for std::array
 
 using namespace std;
+//指令集加速
+//#define AVX_SSE_ENABLE
 
 typedef unsigned long DWORD;
 typedef unsigned short WORD;
@@ -45,12 +46,11 @@ bool FHexDecoder(char* Dec, char* Src)
 	return true;
 }
 
-namespace AobScan {
-	//private: 注意，永远不要手动调用下面的函数
-	std::vector <DWORD> FindSigX32(DWORD dwPid, const char* Value, ULONG64 Start = 0, ULONG64 End = 0);
 
+#ifdef AVX_SSE_ENABLE
 
-} // namespace AobScan
+#include <ppl.h>  // 并行模式库
+#include <emmintrin.h> // 添加此头文件以解决未定义标识符 "__m128i" 和 "_mm_loadu_si128" 的问题
 
 //= ============================================================================================ =
 //==============================================================================================
@@ -237,6 +237,9 @@ public:
 // 初始化静态成员数据
 const InstructionSet::InstructionSet_Internal InstructionSet::CPU_Rep;
 //==============================================================================================
+
+#endif // AVX_SSE_ENABLE
+
 
 // 在 GetReadableRegions 中添加更严格过滤
 bool IsReadable(DWORD protect) {
@@ -441,6 +444,10 @@ BOOL NormalPatternFind(std::vector<ULONGLONG>& retList, const ULONGLONG searchSt
 
 	return TRUE;
 }
+#ifdef AVX_SSE_ENABLE
+
+
+
 /****************************************************************************************
  * @brief ▲▲▲AVX2PatternFind256-使用AVX2加速搜索内存特征码(支持模糊匹配)-By.Haogl-20240906
  * @param retList 用于存储搜索到的特征码对应的内存地址（可以存储多个搜索到的内存地址）
@@ -628,6 +635,9 @@ lessThan16Byte:
 	}
 	return TRUE;
 }
+#endif // AVX_SSE_ENABLE
+
+
 /****************************************************************************************
  * @brief ▲▲▲HglPatternFindEx-判断CPU支持的指令集，自动选择使用SSE2/AVX2加速搜索内存特征码(支持模糊匹配)-By.Haogl-20240906
  * @param retList 用于存储搜索到的特征码对应的内存地址（可以存储多个搜索到的内存地址）
@@ -641,12 +651,11 @@ lessThan16Byte:
 BOOL HglPatternFindEx(std::vector<ULONGLONG>& retList, const ULONGLONG searchStartAddr,
 	const LONGLONG searchSize, const std::string& myPattern, const LONGLONG offsetSize, const ULONGLONG searchNum)
 {
-	InstructionSet instrSet;
+
 	bool ret = false;
 
-	//ret = NormalPatternFind(retList, searchStartAddr, searchSize, myPattern, offsetSize, searchNum);
-	//return ret;
-
+#ifdef AVX_SSE_ENABLE
+	InstructionSet instrSet;
 	if ((bool)instrSet.AVX2)
 	{
 		ret = AVX2PatternFind256(retList, searchStartAddr, searchSize, myPattern, offsetSize, searchNum);
@@ -656,9 +665,19 @@ BOOL HglPatternFindEx(std::vector<ULONGLONG>& retList, const ULONGLONG searchSta
 		ret = SSE2PatternFind128(retList, searchStartAddr, searchSize, myPattern, offsetSize, searchNum);
 	}
 	else
+	
+
+#endif // AVX_SSE_ENABLE
+
 	{
-		ret= NormalPatternFind(retList, searchStartAddr, searchSize, myPattern, offsetSize, searchNum);
+		ret = NormalPatternFind(retList, searchStartAddr, searchSize, myPattern, offsetSize, searchNum);
 	}
+	
+
+	//ret = NormalPatternFind(retList, searchStartAddr, searchSize, myPattern, offsetSize, searchNum);
+	//return ret;
+
+	
 	return ret;
 }
 // 获取模块基址和大小（适用于当前进程）

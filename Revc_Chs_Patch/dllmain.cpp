@@ -12,7 +12,9 @@ using MU = MemUnits;
 
 extern "C" __declspec(dllexport) void  Test()
 {
+    //使用自动注入必须的
 	printf_s("Test\n");
+    //MessageBoxA(NULL, "dll注入成功", "提示", MB_OK);
 }
 
 //#define CALASS_CALL(FUNAddress,ReturnType,Class) RET(ReturnType)
@@ -299,6 +301,14 @@ void Init()
    
 
     printf_s("执行完毕...\n");
+    //加载修改器dll
+    HINSTANCE hDll = LoadLibrary(L"revc_cheat.dll");
+    if (hDll == NULL)
+    {
+        printf_s("revc_cheat.dll加载失败\n");
+        // 处理错误
+    }
+
     IsInit = true;
 }
 
@@ -331,13 +341,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 
 
                 Init();
-                //加载修改器dll
-                HINSTANCE hDll = LoadLibrary(L"revc_cheat.dll");
-                if (hDll == NULL)
-                {
-                    printf_s("revc_cheat.dll加载失败\n");
-                    // 处理错误
-                }
+               
             }
            
             

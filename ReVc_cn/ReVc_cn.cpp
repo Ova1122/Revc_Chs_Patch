@@ -209,24 +209,45 @@ bool MakeResourcePath()
         std::cerr << "2. 权限不足" << std::endl;
         std::cerr << "3. 指定的节或键不存在" << std::endl;
     }*/
+    const wchar_t* FileName = L"temm/../reVC.ini";
+    int val = GetPrivateProfileIntW(L"General", L"Language", -1, FileName);
+    if (val != -1)
+    {
+        if (val != 8)
+        {
+            if (WritePrivateProfileStringW(L"General", L"Language", L"8", FileName)) {
 
-    if (WritePrivateProfileStringW(L"General", L"Language", L"8", L"temm/../reVC.ini")) {
+                //std::cout << "成功修改默认语言为简体中文" << std::endl;
+                //MessageBoxA(nullptr, "修改默认语言为简体中文成功","提示", MB_ICONINFORMATION);
+            }
+            else {
+                DWORD error = GetLastError();
+                std::string errorMessage = "修改默认语言失败，请检查reVC.ini文件是否存在或权限是否足够! 错误代码: " + std::to_string(error);
+                MessageBoxA(nullptr, errorMessage.c_str(), "错误", MB_ICONERROR);
 
-		//std::cout << "成功修改默认语言为简体中文" << std::endl;
-		//MessageBoxA(nullptr, "修改默认语言为简体中文成功","提示", MB_ICONINFORMATION);
-	}
-    else {
-        DWORD error = GetLastError();
-        std::string errorMessage = "修改默认语言失败，请检查reVC.ini文件是否存在或权限是否足够! 错误代码: " + std::to_string(error);
-        MessageBoxA(nullptr, errorMessage.c_str(), "错误", MB_ICONERROR);
-       
-      
-         /*std::cerr << "修改失败! 错误代码: " << error << std::endl;
-        std::cerr << "可能原因: " << std::endl;
-        std::cerr << "1. 文件不存在或路径错误" << std::endl;
-        std::cerr << "2. 权限不足" << std::endl;
-        std::cerr << "3. 指定的节或键不存在" << std::endl;*/
+
+              
+            }
+        }
     }
+    else
+    {
+        if (WritePrivateProfileStringW(L"General", L"Language", L"8", FileName)) {
+
+            //std::cout << "成功修改默认语言为简体中文" << std::endl;
+            //MessageBoxA(nullptr, "修改默认语言为简体中文成功","提示", MB_ICONINFORMATION);
+        }
+        else {
+            DWORD error = GetLastError();
+            std::string errorMessage = "修改默认语言失败，请检查reVC.ini文件是否存在或权限是否足够! 错误代码: " + std::to_string(error);
+            MessageBoxA(nullptr, errorMessage.c_str(), "错误", MB_ICONERROR);
+
+
+
+        }
+    }
+
+   
 
 
     return true;

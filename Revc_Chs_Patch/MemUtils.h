@@ -71,8 +71,8 @@ public:
     {
         DWORD old;
         //…Ë÷√Œ™ø…–¥
-        //VirtualProtect((LPVOID)address, 5, PAGE_EXECUTE_READWRITE, &old);
-        SetMemWriteEnable(address, 5);
+        VirtualProtect((LPVOID)address, 5, PAGE_EXECUTE_READWRITE, &old);
+        //SetMemWriteEnable(address, 5);
         DWORD rel32 = func - (address + 5);
         if (c == HCODE::CODE_CALL)
             MemWrite<byte>(address, call);
@@ -80,8 +80,8 @@ public:
 
         MemWrite<DWORD>(address + 1, rel32);
         //ª÷∏¥
-        SetMemWriteDisable(address, 5);
-       // VirtualProtect((LPVOID)address, 5, old, &old);
+        //SetMemWriteDisable(address, 5);
+        VirtualProtect((LPVOID)address, 5, old, &old);
     }
 
 

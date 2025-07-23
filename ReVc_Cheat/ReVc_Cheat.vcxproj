@@ -106,9 +106,10 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>..\Revc_Chs_Patch\math;..\Revc_Chs_Patch\renderer;..\Revc_Chs_Patch;ImGui\;GameSDK\animation;GameSDK\core;GameSDK\audio;GameSDK\buildings;GameSDK\collision;GameSDK\entities;GameSDK\extras;GameSDK\math;GameSDK\objects;GameSDK\renderer;GameSDK\peds;GameSDK\vehicles;GameSDK\weapons;GameSDK\text;GameSDK\rw;GameSDK\control;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <Optimization>MinSpace</Optimization>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
