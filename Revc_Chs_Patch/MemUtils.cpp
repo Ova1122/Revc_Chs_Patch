@@ -258,14 +258,16 @@ std::vector<MEMORY_BASIC_INFORMATION> GetReadableRegions() {
 		if (VirtualQuery((LPCVOID)startAddr, &mbi, sizeof(mbi))) {
 			// 仅扫描可读且已提交的内存
 			if (IsReadable(mbi.Protect)) {
+				regions.push_back(mbi);
+				/*
 				if (mbi.State != MEM_FREE)
 				{
 					if (mbi.State != MEM_RESERVE)
 					{
-						regions.push_back(mbi);
+					
 					}
 
-				}
+				}*/
 
 			}
 			startAddr = (ULONG_PTR)mbi.BaseAddress + mbi.RegionSize;
@@ -366,6 +368,77 @@ inline BOOL InitPattern(const std::string& myPattern, std::vector<UCHAR>& vecPtn
 		vecPtn.push_back(strtoul(tmpS.c_str(), nullptr, 16));
 	}
 	if (0 == vecIdx.size()) { return FALSE; }
+	return TRUE;
+}
+/****************************************************************************************
+ * @brief ▲▲▲NormalPatternFind-普通暴力搜索内存特征码(支持模糊匹配)
+ * @param retList 用于存储搜索到的特征码对应的内存地址（可以存储多个搜索到的内存地址）
+ * @param searchStartAddr 需要搜索的起始内存地址
+ * @param searchSize 要搜索的内存块的大小,可上负下正（以字节为单位）
+ * @param myPattern 搜索特征码，支持通配符??、?，如："?? 5? 77 ?? 88 ?? ?A ??"
+ * @param offsetSize 特征码地址离目标地址的偏移距离，上负下正，默认0不偏移
+ * @param searchNum 搜索个数，0为搜索整个模块，默认为0
+ * @return 成功返回TRUE，失败返回FALSE
+*/
+BOOL NormalPatternFind(std::vector<ULONGLONG>& retList, const ULONGLONG searchStartAddr,
+	const LONGLONG searchSize, const std::string& myPattern,
+	const LONGLONG offsetSize, const ULONGLONG searchNum)
+{
+	if (0 == searchStartAddr || 0 == searchSize) { return FALSE; }
+
+	ULONGLONG realStartAddr = searchStartAddr;
+	ULONGLONG absSearchSize = std::abs(searchSize);
+
+	// 处理向上搜索的情况
+	if (searchSize < 0) {
+		if (searchStartAddr > absSearchSize) {
+			realStartAddr = searchStartAddr - absSearchSize;
+		}
+		else {
+			return FALSE; // 无效的搜索范围
+		}
+	}
+
+	// 解析特征码
+	std::vector<UCHAR> vecPtn, vecMsk;
+	std::vector<ULONG> vecIdx;
+	if (!InitPattern(myPattern, vecPtn, vecMsk, vecIdx)) {
+		return FALSE;
+	}
+
+	const size_t patternSize = vecPtn.size();
+	if (patternSize == 0 || absSearchSize < patternSize) {
+		return FALSE;
+	}
+
+	// 暴力搜索
+	PUCHAR startPtr = (PUCHAR)realStartAddr;
+	PUCHAR endPtr = startPtr + absSearchSize - patternSize;
+
+	for (PUCHAR addr = startPtr; addr <= endPtr; addr++) {
+		bool match = true;
+
+		// 检查每个字节
+		for (size_t i = 0; i < patternSize; i++) {
+			UCHAR memByte = addr[i];
+			UCHAR patternByte = vecPtn[i];
+			UCHAR maskByte = vecMsk[i];
+
+			// 使用掩码处理通配符
+			if ((memByte & ~maskByte) != (patternByte & ~maskByte)) {
+				match = false;
+				break;
+			}
+		}
+
+		if (match) {
+			retList.push_back((ULONGLONG)addr + offsetSize);
+			if (searchNum > 0 && retList.size() >= searchNum) {
+				return TRUE;
+			}
+		}
+	}
+
 	return TRUE;
 }
 /****************************************************************************************
@@ -570,6 +643,10 @@ BOOL HglPatternFindEx(std::vector<ULONGLONG>& retList, const ULONGLONG searchSta
 {
 	InstructionSet instrSet;
 	bool ret = false;
+
+	//ret = NormalPatternFind(retList, searchStartAddr, searchSize, myPattern, offsetSize, searchNum);
+	//return ret;
+
 	if ((bool)instrSet.AVX2)
 	{
 		ret = AVX2PatternFind256(retList, searchStartAddr, searchSize, myPattern, offsetSize, searchNum);
@@ -577,6 +654,10 @@ BOOL HglPatternFindEx(std::vector<ULONGLONG>& retList, const ULONGLONG searchSta
 	else if ((bool)instrSet.SSE2)
 	{
 		ret = SSE2PatternFind128(retList, searchStartAddr, searchSize, myPattern, offsetSize, searchNum);
+	}
+	else
+	{
+		ret= NormalPatternFind(retList, searchStartAddr, searchSize, myPattern, offsetSize, searchNum);
 	}
 	return ret;
 }
@@ -635,7 +716,10 @@ std::vector<ULONGLONG> MemUnits::ScanMemory(const std::string& pattern, const ch
 	//HglPatternFindEx(regionResults, (ULONGLONG)modInfo.lpBaseOfDll, modInfo.SizeOfImage, pattern, 0, 0);
 
 	for (const auto& mbi : regions) {
-		ULONGLONG startAddr = (ULONGLONG)mbi.BaseAddress; ULONGLONG regionSize = (ULONGLONG)mbi.RegionSize; ULONGLONG moduleStart = (ULONGLONG)modInfo.lpBaseOfDll; ULONGLONG moduleEnd = moduleStart + modInfo.SizeOfImage;
+		ULONGLONG startAddr = (ULONGLONG)mbi.BaseAddress; 
+		ULONGLONG regionSize = (ULONGLONG)mbi.RegionSize;
+		ULONGLONG moduleStart = (ULONGLONG)modInfo.lpBaseOfDll;
+		ULONGLONG moduleEnd = moduleStart + modInfo.SizeOfImage;
 		// 跳过不在模块范围内的区域
 		if (startAddr >= moduleEnd) break;
 		if (startAddr + regionSize <= moduleStart) continue;

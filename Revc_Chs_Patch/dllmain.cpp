@@ -10,7 +10,10 @@
   //简化类名
 using MU = MemUnits;
 
-
+extern "C" __declspec(dllexport) void  Test()
+{
+	printf_s("Test\n");
+}
 
 //#define CALASS_CALL(FUNAddress,ReturnType,Class) RET(ReturnType)
 
